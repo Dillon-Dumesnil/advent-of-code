@@ -3,29 +3,26 @@ INPUT = ['29x13x26', '11x11x14', '27x2x5', '6x10x13', '15x19x10', '26x29x15', '8
 
 def process_input(data):
     for i in range(len(data)):
-        data[i] = [int(d) for d in data[i].split('x')]
+        data[i] = sorted([int(d) for d in data[i].split('x')])
     return data
 
-def surface_area(measurement):
+def shortest_distance_around_sides(measurement):
+    return measurement[0]*2 + measurement[1]*2
+
+def volume(measurement):
     l = measurement[0]
     w = measurement[1]
     h = measurement[2]
-    return 2*l*w + 2*w*h + 2*h*l
+    return l*w*h
 
-def area_of_smallest_side(measurement):
-    l = measurement[0]
-    w = measurement[1]
-    h = measurement[2]
-    return min([l*w, w*h, h*l])
-
-def total_wrapping_paper(data):
+def total_ribbon(data):
     measurements = process_input(data)
-    total_square_feet = 0
+    total_ribbon = 0
     for measurement in measurements:
-        total_square_feet += surface_area(measurement)
-        total_square_feet += area_of_smallest_side(measurement)
-    return total_square_feet
+        total_ribbon += shortest_distance_around_sides(measurement)
+        total_ribbon += volume(measurement)
+    return total_ribbon
 
 
 if __name__ == '__main__':
-    print(total_wrapping_paper(INPUT))
+    print(total_ribbon(INPUT))
