@@ -3,27 +3,35 @@ INPUT = ['#1 @ 912,277: 27x20', '#2 @ 129,477: 14x12', '#3 @ 915,716: 17x23', '#
 
 def parse_data(data):
     for i in range(len(data)):
-        _, _, edges, size = data[i].split(' ')
+        claim_id, _, edges, size = data[i].split(' ')
+        claim_id = int(claim_id.replace('#', ''))
         edges = edges.replace(':', '')
         left, top = [int(edge) for edge in edges.split(',')]
         w, h = [int(d) for d in size.split('x')]
-        data[i] = [left, top, w, h]
+        data[i] = [claim_id, left, top, w, h]
     return data
 
 def calculate_overlap(data):
     count = 0
-    seen_squares = set()
-    counted_squares = set()
+    seen_squares = {}
+    all_claims = set()
     for claim in data:
-        left, top, w, h = claim
+        claim_id, left, top, w, h = claim
         for i in range(left, left + w):
             for j in range(top, top + h):
-                if (i, j) in seen_squares and (i, j) not in counted_squares:
-                    count += 1
-                    counted_squares.add((i, j))
+                if (i, j) in seen_squares:
+                    seen_squares[(i, j)].append(claim_id)
                 else:
-                    seen_squares.add((i,j))
-    return count
+                    seen_squares[(i,j)] = [claim_id]
+                    all_claims.add(claim_id)
+
+    for square in seen_squares:
+        if len(seen_squares[square]) > 1:
+            for claim_id in seen_squares[square]:
+                if claim_id in all_claims:
+                    all_claims.remove(claim_id)
+
+    return all_claims
 
 if __name__ == '__main__':
     processed_data = parse_data(INPUT)
