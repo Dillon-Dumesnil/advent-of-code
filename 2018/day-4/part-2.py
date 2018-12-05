@@ -48,19 +48,24 @@ def organize_guard_data(data):
 
     return guard_data
 
-def find_sleepy_guard(guard_data):
+def find_sleepiest_guard(guard_data):
     sleepy_guard = None
-    max_sleep = -1
+    sleepy_minute = None
+    sleepy_minute_count = 0
     for guard_id in guard_data:
-        if guard_data[guard_id][0] > max_sleep:
-            sleepy_guard = guard_id
-            max_sleep = guard_data[guard_id][0]
+        minutes_asleep = guard_data[guard_id][1]
+        if len(minutes_asleep) > 0:
+            temp_minute = max(set(minutes_asleep), key=minutes_asleep.count)
+            temp_count = int(minutes_asleep.count(temp_minute))
+            if temp_count > sleepy_minute_count:
+                sleepy_guard = guard_id
+                sleepy_minute = temp_minute
+                sleepy_minute_count = temp_count
 
-    sleepy_minute = max(set(guard_data[sleepy_guard][1]), key=guard_data[sleepy_guard][1].count)
-    return int(sleepy_guard), sleepy_minute
+    return int(sleepy_guard), int(sleepy_minute)
 
 if __name__ == '__main__':
     data = parse_input('input.txt')
     guard_data = organize_guard_data(data)
-    sleepy_guard, sleepy_minute = find_sleepy_guard(guard_data)
+    sleepy_guard, sleepy_minute = find_sleepiest_guard(guard_data)
     print(sleepy_guard * sleepy_minute)
