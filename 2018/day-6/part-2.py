@@ -27,41 +27,24 @@ def calculate_grid(coordinates, max_x, max_y):
     for i in range(max_x):
         for j in range(max_y):
             point = (i, j)
-            grid[point] = [None, np.inf]
+            sum_distance = 0
             for index in range(len(coordinates)):
                 coord = coordinates[index]
-                distance = manhattan_distance((point[0]+1, point[1]+1), coord)
-                if distance < grid[point][1]:
-                    grid[point] = [index, distance]
-                elif distance == grid[point][1]:
-                    grid[point][0] = None
+                sum_distance += manhattan_distance((point[0]+1, point[1]+1), coord)
+            grid[point] = sum_distance < 10000
 
     return grid
 
-def largest_area(grid, num_coordinates):
-    dont_count = set([])
+def largest_area(grid):
     max_x, max_y = grid.shape
-    coord_counts = {i: 0 for i in range(num_coordinates)}
+    count = 0
     for i in range(max_x):
         for j in range(max_y):
             point = (i, j)
-            index = grid[point][0]
-            if i == 0 or j == 0 or i == (max_x - 1) or j == (max_y - 1):
-                dont_count.add(index)
-            if grid[point][0] != None:
-                coord_counts[index] += 1
+            if grid[point]:
+                count += 1
 
-    best_count = -1
-    best_index = -1
-    for key in coord_counts:
-        if key in dont_count:
-            continue
-        elif coord_counts[key] > best_count:
-            best_count = coord_counts[key]
-            best_index = key
-
-    return best_index, best_count
-
+    return count
 
 def manhattan_distance(point, coord):
     return abs(point[0] - coord[0]) + abs(point[1] - coord[1])
@@ -70,5 +53,5 @@ def manhattan_distance(point, coord):
 if __name__ == '__main__':
     coordinates, max_x, max_y = parse_input('input.txt')
     grid = calculate_grid(coordinates, max_x, max_y)
-    best_index, best_count = largest_area(grid, len(coordinates))
-    print(best_index, best_count)
+    count = largest_area(grid)
+    print(count)
