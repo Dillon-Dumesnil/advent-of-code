@@ -1,4 +1,7 @@
-INPUT = '411 players; last marble is worth 71170 points'
+from blist import blist
+
+
+INPUT = '411 players; last marble is worth 7117000 points'
 
 TEST_INPUT_0 = '9 players; last marble is worth 25 points: high score is 32'
 TEST_INPUT_1 = '10 players; last marble is worth 1618 points: high score is 8317'
@@ -19,7 +22,7 @@ def play_game(num_players, num_marbles):
     scores = {player: 0 for player in range(num_players)}
 
     current_marble_index = 0
-    marble_list = [0]
+    marble_list = blist([0])
     for marble in range(1, num_marbles + 1):
         if marble % 23 == 0:
             player_number = marble % num_players
