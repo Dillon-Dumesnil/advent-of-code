@@ -115,14 +115,15 @@ class Point(object):
 
 
 def step(sky):
+    count = 0
     while sky.current_bounding_box < sky.previous_bounding_box:
+        count += 1
         sky.step()
         sky.set_bounding_box()
-    sky.show_message()
+    return count - 1
 
 
 if __name__ == '__main__':
     sky = parse_input('input.txt')
-    step(sky)
-
-    # Solution: GFANEHKJ
+    count = step(sky)
+    print(count)
