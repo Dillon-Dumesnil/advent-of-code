@@ -91,21 +91,22 @@ class Cart(object):
 
 
 def detect_collision(tracks, carts):
-    no_collision = True
-    while no_collision:
-        for cart in carts:
+    while len(carts) > 1:
+        # Need to sort because carts are supposed to move from top to bottom,
+        # left to right in each tick.
+        for cart in sorted(carts, key=lambda cart: (cart.y, cart.x)):
             cart.tick(tracks)
             for cart_2 in carts:
-                if cart != cart_2:
-                    if cart.x == cart_2.x and cart.y == cart_2.y:
-                        no_collision = False
-                        collision_coordinate = (cart.y, cart.x)
+                if cart != cart_2 and (cart.x, cart.y) == (cart_2.x, cart_2.y):
+                    carts.remove(cart)
+                    carts.remove(cart_2)
+                    break
 
-    return collision_coordinate
-
+    last_cart = carts[0]
+    return last_cart.y, last_cart.x
 
 
 if __name__ == '__main__':
     tracks, carts = parse_input('input.txt')
-    collision_coordinate = detect_collision(tracks, carts)
-    print(collision_coordinate)
+    remaining_cart_coordinate = detect_collision(tracks, carts)
+    print(remaining_cart_coordinate)
