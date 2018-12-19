@@ -50,8 +50,8 @@ class Unit(object):
             visited.add(current)
             possible_nodes = [
                 (current[0] - 1, current[1]),
-                (current[0], current[1] + 1),
                 (current[0], current[1] - 1),
+                (current[0], current[1] + 1),
                 (current[0] + 1, current[1]),
             ]
             for neighbor in possible_nodes:
@@ -80,9 +80,6 @@ class Unit(object):
             if len(enemy_path) == overall_shortest_path_length
         ]
 
-        possible_enemy_paths = sorted(possible_enemy_paths,
-            key=lambda path: (path[-2][0], path[-2][1])#, path[1][0], path[1][1])
-        )
         if possible_enemy_paths:
             chosen_enemy_path = possible_enemy_paths[0]
             # This means we are already standing next to enemy
@@ -155,7 +152,7 @@ def battle(cavern, units):
         if not end:
             number_of_rounds_completed += 1
 
-    return number_of_rounds_completed
+    return number_of_rounds_completed, units
 
 def outcome_of_battle(units, number_of_rounds_completed):
     if len(units['E']) > 0:
@@ -167,45 +164,107 @@ def outcome_of_battle(units, number_of_rounds_completed):
 
 if __name__ == '__main__':
     cavern, units = parse_input('input.txt')
+    num_elves = len(units['E'])
+    elf_attack = 32
     # print(units)
-    number_of_rounds_completed = battle(cavern, units)
+    number_of_rounds_completed, units = battle(cavern, units)
+    while num_elves != len(units['E']):
+        elf_attack += 1
+        print("elf attack", elf_attack)
+        cavern, units = parse_input('input.txt')
+        for elf in units['E']:
+            elf.attack = elf_attack
+
+        number_of_rounds_completed, units = battle(cavern, units)
+        # print(units)
     print(number_of_rounds_completed)
     outcome = outcome_of_battle(units, number_of_rounds_completed)
     print(outcome)
 
-    # cavern, units = parse_input('test-input-7.txt')
-    # number_of_rounds_completed = battle(cavern, units)
+    # cavern, units = parse_input('test-input-8.txt')
     # # print(units)
+    # num_elves = len(units['E'])
+    # elf_attack = 4
+    # number_of_rounds_completed, units = battle(cavern, units)
+    # while num_elves != len(units['E']):
+    #     print("elf attack", elf_attack)
+    #     cavern, units = parse_input('test-input-8.txt')
+    #     for elf in units['E']:
+    #         elf.attack = elf_attack
+
+    #     number_of_rounds_completed, units = battle(cavern, units)
+    #     elf_attack += 1
     # print(number_of_rounds_completed)
     # outcome = outcome_of_battle(units, number_of_rounds_completed)
     # print(outcome)
 
     # cavern, units = parse_input('test-input-2.txt')
-    # number_of_rounds_completed = battle(cavern, units)
-    # print(units)
+    # # print(units)
+    # num_elves = len(units['E'])
+    # elf_attack = 3
+    # number_of_rounds_completed, units = battle(cavern, units)
+    # while num_elves != len(units['E']):
+    #     elf_attack += 1
+    #     cavern, units = parse_input('test-input-2.txt')
+    #     for elf in units['E']:
+    #         elf.attack = elf_attack
+
+    #     number_of_rounds_completed, units = battle(cavern, units)
+    # print(elf_attack)
     # print(number_of_rounds_completed)
     # outcome = outcome_of_battle(units, number_of_rounds_completed)
     # print(outcome)
+    # print()
 
     # cavern, units = parse_input('test-input-3.txt')
-    # number_of_rounds_completed = battle(cavern, units)
-    # print(units)
+    # # print(units)
+    # num_elves = len(units['E'])
+    # elf_attack = 3
+    # number_of_rounds_completed, units = battle(cavern, units)
+    # while num_elves != len(units['E']):
+    #     elf_attack += 1
+    #     cavern, units = parse_input('test-input-3.txt')
+    #     for elf in units['E']:
+    #         elf.attack = elf_attack
+
+    #     number_of_rounds_completed, units = battle(cavern, units)
+    # print(elf_attack)
     # print(number_of_rounds_completed)
     # outcome = outcome_of_battle(units, number_of_rounds_completed)
     # print(outcome)
+    # print()
 
     # cavern, units = parse_input('test-input-4.txt')
-    # number_of_rounds_completed = battle(cavern, units)
-    # print(units)
-    # print(number_of_rounds_completed)
-    # outcome = outcome_of_battle(units, number_of_rounds_completed)
-    # print(outcome)
+    # # print(units)
+    # num_elves = len(units['E'])
+    # elf_attack = 3
+    # number_of_rounds_completed, units = battle(cavern, units)
+    # while num_elves != len(units['E']):
+    #     elf_attack += 1
+    #     cavern, units = parse_input('test-input-4.txt')
+    #     for elf in units['E']:
+    #         elf.attack = elf_attack
 
-    # start = time.time()
-    # cavern, units = parse_input('test-input-5.txt')
-    # number_of_rounds_completed = battle(cavern, units)
-    # print(units)
+    #     number_of_rounds_completed, units = battle(cavern, units)
+    # print(elf_attack)
     # print(number_of_rounds_completed)
     # outcome = outcome_of_battle(units, number_of_rounds_completed)
     # print(outcome)
-    # print("Time:", time.time() - start)
+    # print()
+
+    # cavern, units = parse_input('test-input-5.txt')
+    # # print(units)
+    # num_elves = len(units['E'])
+    # elf_attack = 3
+    # number_of_rounds_completed, units = battle(cavern, units)
+    # while num_elves != len(units['E']):
+    #     elf_attack += 1
+    #     cavern, units = parse_input('test-input-5.txt')
+    #     for elf in units['E']:
+    #         elf.attack = elf_attack
+
+    #     number_of_rounds_completed, units = battle(cavern, units)
+    # print(elf_attack)
+    # print(number_of_rounds_completed)
+    # outcome = outcome_of_battle(units, number_of_rounds_completed)
+    # print(outcome)
