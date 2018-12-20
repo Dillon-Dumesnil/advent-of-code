@@ -15,6 +15,7 @@ def add_i(registers, instruction):
     after_op = registers.copy()
     _, A, B, C = instruction
     after_op[C] = registers[A] + B
+    return after_op
 
 def mul_r(registers, instruction):
     after_op = registers.copy()
@@ -119,27 +120,51 @@ all_operations = [
     eq_r_r,
 ]
 
+opcodes = {i: all_operations.copy() for i in range(16)}
+
 def behaves_like_opcodes(input_file):
     abs_file_path = os.path.join(script_dir, input_file)
     with open(abs_file_path) as f:
-        overall_count = 0
         all_lines = f.readlines()
         for i in range(0, len(all_lines), 4):
             before = literal_eval(all_lines[i].strip().split(': ')[1])
             instruction = [int(j) for j in all_lines[i + 1].strip().split()]
             after = literal_eval(all_lines[i + 2].strip().split(':  ')[1])
+            opcode = instruction[0]
 
-            count_three = 0
             for operation in all_operations:
-                if operation(before, instruction) == after:
-                    count_three += 1
-                if count_three == 3:
-                    overall_count += 1
-                    break
+                result = operation(before, instruction)
+                if result != after:
+                    if operation in opcodes[opcode]:
+                        opcodes[opcode].remove(operation)
 
-    return overall_count
+    return opcodes
+
+def process_opcodes(opcodes):
+    # This is to reduce each opcode down to a single possible operation.
+    for i in range(16):
+        for code in opcodes:
+            if len(opcodes[code]) == 1:
+                for k in opcodes:
+                    if k != code and opcodes[code][0] in opcodes[k]:
+                        opcodes[k].remove(opcodes[code][0])
+    return opcodes
+
+def do_instructions(input_file, opcodes):
+    abs_file_path = os.path.join(script_dir, input_file)
+    with open(abs_file_path) as f:
+        registers = [0, 0, 0, 0]
+        for line in f:
+            instruction = [int(j) for j in line.strip().split()]
+            opcode = instruction[0]
+            operation = opcodes[opcode][0]
+            registers = operation(registers, instruction)
+
+    return registers
 
 
 if __name__ == '__main__':
-    overall_count = behaves_like_opcodes('input-1.txt')
-    print(overall_count)
+    opcodes = behaves_like_opcodes('input-1.txt')
+    opcodes = process_opcodes(opcodes)
+    final_registers = do_instructions('input-2.txt', opcodes)
+    print(final_registers)
