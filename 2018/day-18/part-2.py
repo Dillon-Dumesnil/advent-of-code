@@ -17,7 +17,9 @@ def parse_input(input_file):
     return forest
 
 def change_landscape(forest):
-    for _ in range(10):
+    old_count = None
+    resource_value = None
+    for _ in range(500):
         new_forest = deepcopy(forest)
         for x in range(len(forest)):
             for y in range(len(forest[0])):
@@ -48,7 +50,10 @@ def change_landscape(forest):
                 elif lumberyard:
                     if lumberyard_count < 1 or tree_count < 1:
                         new_forest[x][y] = '.'
+
         forest = new_forest
+        if _ > 400:
+            print(count_resource_value(forest), _)
 
     return forest
 
@@ -67,9 +72,42 @@ if __name__ == '__main__':
     forest = parse_input('input.txt')
     forest = change_landscape(forest)
     resource_value = count_resource_value(forest)
-    print(resource_value)
 
     # forest = parse_input('test-input.txt')
     # forest = change_landscape(forest)
     # resource_value = count_resource_value(forest)
     # print(resource_value)
+
+# Pattern:
+# resource_value, iteration value, value in pattern
+# 197556, 430, 1
+# 204350, 431, 2
+# 210184, 432, 3
+# 211560, 433, 4
+# 213408, 434, 5
+# 215460, 435, 6
+# 221328, 436, 7
+# 223416, 437, 8
+# 227409, 438, 9
+# 224005, 439, 10
+# 227907, 440, 11
+# 222768, 441, 12
+# 215400, 442, 13
+# 208260, 443, 14
+# 199850, 444, 15
+# 191178, 445, 16
+# 182381, 446, 17
+# 175168, 447, 18
+# 165680, 448, 19
+# 164892, 449, 20
+# 163602, 450, 21
+# 163430, 451, 22
+# 167739, 452, 23
+# 172104, 453, 24
+# 176900, 454, 25
+# 184004, 455, 26
+# 189440, 456, 27
+# 192279, 457, 28
+
+# Solution was found by finding the pattern and then taking 1000000000 % 28
+# to find what the resource_value should be.
