@@ -1,7 +1,5 @@
 import os
 
-from ast import literal_eval
-
 script_dir = os.path.dirname(__file__)
 
 
@@ -101,46 +99,75 @@ def eq_r_r(registers, instruction):
     after_op[C] = 1 if registers[A] == registers[B] else 0
     return after_op
 
-all_operations = [
-    add_r,
-    add_i,
-    mul_r,
-    mul_i,
-    ban_r,
-    ban_i,
-    bor_r,
-    bor_i,
-    set_r,
-    set_i,
-    gt_i_r,
-    gt_r_i,
-    gt_r_r,
-    eq_i_r,
-    eq_r_i,
-    eq_r_r,
-]
-
-def behaves_like_opcodes(input_file):
+def parse_input(input_file):
     abs_file_path = os.path.join(script_dir, input_file)
     with open(abs_file_path) as f:
-        overall_count = 0
-        all_lines = f.readlines()
-        for i in range(0, len(all_lines), 4):
-            before = literal_eval(all_lines[i].strip().split(': ')[1])
-            instruction = [int(j) for j in all_lines[i + 1].strip().split()]
-            after = literal_eval(all_lines[i + 2].strip().split(':  ')[1])
+        instruction_pointer = int(f.readline().strip().split()[1])
+        instructions = []
+        for line in f:
+            instruction = line.strip().split()
+            instruction[1:] = [int(i) for i in instruction[1:]]
+            instructions.append(instruction)
 
-            count_three = 0
-            for operation in all_operations:
-                if operation(before, instruction) == after:
-                    count_three += 1
-                if count_three == 3:
-                    overall_count += 1
-                    break
+    return instruction_pointer, instructions
 
-    return overall_count
+name_to_operation = {
+    'addr': add_r,
+    'addi': add_i,
+    'mulr': mul_r,
+    'muli': mul_i,
+    'banr': ban_r,
+    'bani': ban_i,
+    'borr': bor_r,
+    'bori': bor_i,
+    'setr': set_r,
+    'seti': set_i,
+    'gtir': gt_i_r,
+    'gtri': gt_r_i,
+    'gtrr': gt_r_r,
+    'eqir': eq_i_r,
+    'eqri': eq_r_i,
+    'eqrr': eq_r_r,
+}
+def execute_instructions(instruction_pointer, instructions):
+    registers = [1, 0, 0, 0, 0, 0]
+    # registers = [0, 10551292, 4, 10551293, 10551293, 1]
+    # registers = [1, 10551292, 13, 10551293, 0, 10551293]
+    count = 0
+    while registers[instruction_pointer] < len(instructions):
+        instruction = instructions[registers[instruction_pointer]]
+        name = instruction[0]
+        operation = name_to_operation[name]
+        registers = operation(registers, instruction)
+        registers[instruction_pointer] += 1
+        count += 1
+        print(registers)
+        if count == 500:
+            break
+    return registers
 
 
 if __name__ == '__main__':
-    overall_count = behaves_like_opcodes('input-1.txt')
-    print(overall_count)
+    instruction_pointer, instructions = parse_input('input.txt')
+    registers = execute_instructions(instruction_pointer, instructions)
+    print(registers[0])
+
+    # instruction_pointer, instructions = parse_input('test-input.txt')
+    # registers = execute_instructions(instruction_pointer, instructions)
+    # print(registers[0])
+
+# Solution:
+# 1+2+4+61+83+122+166+244+332+521+1042+2084+5063+
+# 10126+20252+31781+43243+63562+86486+127124+172972+
+# 2637823+5275646+10551292 = 19030032
+
+# This was done by discovering the pattern to the inputs causing a pattern in the
+# registers. The pattern was that registers[3] would increment until
+# registers[3] * registers[5] == 10551292 (registers[1]). Once that happened,
+# registers[5] would be added to registers[0] and then registers[5] would be
+# incremented by 1 and registers[3] set back to 1. This continued until
+# registers[5] > 10551292 (registers[1]) which would finally break the loop.
+
+# The final value of registers[0] was thus the divisors of 10551292 since the
+# only time registers[0] would be added to was when
+# registers[3] * registers[5] = 10551292 and registers[5] was added.
