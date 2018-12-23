@@ -105,7 +105,7 @@ def count_water(grid, min_y):
     count = 0
     for y in range(min_y, grid.shape[0]):
         for x in range(grid.shape[1]):
-            if grid[y, x] == '~' or grid[y, x] == '|':
+            if grid[y, x] == '~':
                 count += 1
     return count
 
