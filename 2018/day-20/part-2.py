@@ -69,19 +69,19 @@ def bfs_path(graph, start, goal):
             visited.add(neighbor)
 
 def longest_shortest_path(graph):
-    all_shortest_path_lengths = []
+    rooms_over_thousand = 0
     for node in graph:
-        if graph[node] == set():
-            path = bfs_path(graph, (0, 0), node)
-            all_shortest_path_lengths.append(len(path) - 1)
-    return max(all_shortest_path_lengths)
+        path = bfs_path(graph, (0, 0), node)
+        if (len(path) - 1) >= 1000:
+            rooms_over_thousand += 1
+    return rooms_over_thousand
 
 
 if __name__ == '__main__':
     path = parse_input('input.txt')
     graph, _ = create_graph(path, (0, 0), {})
-    largest_number_of_doors = longest_shortest_path(graph)
-    print(largest_number_of_doors)
+    rooms_over_thousand = longest_shortest_path(graph)
+    print(rooms_over_thousand)
 
     # path = parse_input('test-input-1.txt')
     # graph, _ = create_graph(path, (0, 0), {})
