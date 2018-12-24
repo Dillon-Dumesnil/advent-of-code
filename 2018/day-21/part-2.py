@@ -130,17 +130,21 @@ name_to_operation = {
     'eqrr': eq_r_r,
 }
 def execute_instructions(instruction_pointer, instructions):
-    registers = [13270004, 0, 0, 0, 0, 0]
+    registers = [0, 0, 0, 0, 0, 0]
     count = 0
+    repeat = set()
     while registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
         name = instruction[0]
         operation = name_to_operation[name]
         registers = operation(registers, instruction)
         registers[instruction_pointer] += 1
-        count += 1
         if registers[instruction_pointer] == 28:
             print(registers)
+            if registers[3] in repeat:
+                break
+            else:
+                repeat.add(registers[3])
 
     return registers
 
